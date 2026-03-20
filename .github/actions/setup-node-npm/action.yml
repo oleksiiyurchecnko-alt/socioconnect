@@ -1,0 +1,27 @@
+name: Setup Node and install dependencies
+description: Checkout repository, setup Node.js, and run npm ci
+
+inputs:
+  node-version:
+    description: Node.js version
+    required: false
+    default: '20'
+  fetch-depth:
+    description: Checkout fetch depth
+    required: false
+    default: '0'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: ${{ inputs.fetch-depth }}
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+
+    - run: npm ci
+      shell: bash

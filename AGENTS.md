@@ -7,7 +7,7 @@ apps/
   admin/       - Angular app (4200)
   main/        - Angular app (4201)
   e2e-admin/   - Playwright E2E for admin
-  e2e-main/    - Playwright E2E for main
+  e2e-main/   - Playwright E2E for main
 libs/
   ui-components/ - Angular components (prefix sc)
   types/         - TS types
@@ -17,15 +17,15 @@ libs/
 
 ## Commands
 
-| Task | Command |
-|------|---------|
-| Serve admin | `nx serve admin` |
-| Serve main | `nx serve main` |
-| Build all | `nx run-many -t build --projects=admin,main` |
-| Lint | `nx run-many -t lint --all` |
-| Test | `nx run-many -t test --all` |
-| E2E admin | `nx e2e e2e-admin` |
-| E2E main | `nx e2e e2e-main` |
+| Task        | Command                                      |
+| ----------- | -------------------------------------------- |
+| Serve admin | `nx serve admin`                             |
+| Serve main  | `nx serve main`                              |
+| Build all   | `nx run-many -t build --projects=admin,main` |
+| Lint        | `nx run-many -t lint --all`                  |
+| Test        | `nx run-many -t test --all`                  |
+| E2E admin   | `nx e2e e2e-admin`                           |
+| E2E main    | `nx e2e e2e-main`                            |
 
 ## Environments
 
@@ -44,6 +44,8 @@ import { APP_NAME, MOCK_API_DELAY_MS } from '@socioconnect/constants';
 ## CI/CD
 
 - Push to `main` or `development` triggers: lint → test → e2e → build → deploy
+- Uses `nx affected` - only runs tasks for changed projects; builds and deploys only affected apps
+- Shared CI bootstrap lives in `.github/actions/setup-node-npm`
 - Deploy: S3 + CloudFront (secrets: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_BUCKET_DEV, S3_BUCKET_PROD, CLOUDFRONT_DISTRIBUTION_ID_DEV, CLOUDFRONT_DISTRIBUTION_ID_PROD)
 
 ## AI / MCP
