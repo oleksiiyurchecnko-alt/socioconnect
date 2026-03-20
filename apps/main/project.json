@@ -24,6 +24,7 @@
       },
       "configurations": {
         "production": {
+          "baseHref": "/main/",
           "fileReplacements": [
             {
               "replace": "apps/main/src/environments/environment.ts",

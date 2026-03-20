@@ -24,6 +24,7 @@
       },
       "configurations": {
         "production": {
+          "baseHref": "/admin/",
           "fileReplacements": [
             {
               "replace": "apps/admin/src/environments/environment.ts",
