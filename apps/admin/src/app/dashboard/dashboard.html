@@ -1,9 +1,11 @@
-<div class="dashboard">
-  <h1>{{ title }}</h1>
-  <p>App: {{ appName }}</p>
-  <p>Mock delay: {{ mockDelay }}ms</p>
-  <p>User: {{ user.name }} ({{ user.id }})</p>
-  <p>Sum: {{ sum }}</p>
-  <sc-button label="Increment" (click)="onAction()"></sc-button>
+<div class="dashboard" data-testid="dashboard">
+  <h1 data-testid="dashboard-title">{{ title }}</h1>
+  <p data-testid="dashboard-app-name">App: {{ appName }}</p>
+  <p data-testid="dashboard-mock-delay">Mock delay: {{ mockDelay }}ms</p>
+  <p data-testid="dashboard-user">User: {{ user.name }} ({{ user.id }})</p>
+  <p data-testid="dashboard-sum">Sum: {{ sum }}</p>
+  <div data-testid="dashboard-increment">
+    <sc-button label="Increment" (click)="onAction()"></sc-button>
+  </div>
   <router-outlet></router-outlet>
 </div>
