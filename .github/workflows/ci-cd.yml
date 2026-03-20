@@ -35,9 +35,11 @@ jobs:
       apps: ${{ steps.apps.outputs.apps }}
       has_apps: ${{ steps.apps.outputs.has_apps }}
     steps:
-      - uses: ./.github/actions/setup-node-npm
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - uses: ./.github/actions/setup-node-npm
 
       - name: Get affected deployable apps
         id: apps
@@ -54,9 +56,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: set-shas
     steps:
-      - uses: ./.github/actions/setup-node-npm
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - uses: ./.github/actions/setup-node-npm
 
       - name: Lint
         run: npx nx affected -t lint --base=${{ needs.set-shas.outputs.base }} --head=${{ needs.set-shas.outputs.head }} --parallel=3 --outputStyle=static
@@ -65,9 +69,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: set-shas
     steps:
-      - uses: ./.github/actions/setup-node-npm
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - uses: ./.github/actions/setup-node-npm
 
       - name: Unit tests
         run: npx nx affected -t test --base=${{ needs.set-shas.outputs.base }} --head=${{ needs.set-shas.outputs.head }} --skip-nx-cache --parallel=3 --outputStyle=static
@@ -76,9 +82,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [set-shas, lint, test]
     steps:
-      - uses: ./.github/actions/setup-node-npm
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - uses: ./.github/actions/setup-node-npm
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -95,9 +103,11 @@ jobs:
       matrix:
         app: ${{ fromJson(needs.affected-apps.outputs.apps) }}
     steps:
-      - uses: ./.github/actions/setup-node-npm
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - uses: ./.github/actions/setup-node-npm
 
       - name: Build ${{ matrix.app }}
         run: npx nx run ${{ matrix.app }}:build:production --outputStyle=static
