@@ -1,0 +1,13 @@
+---
+description: Nx + Angular conventions for socioconnect
+globs: "**/*.ts"
+alwaysApply: false
+---
+
+# Nx Angular Conventions
+
+- Apps: `admin` (port 4200), `main` (port 4201)
+- Shared libs: `@socioconnect/ui-components`, `@socioconnect/types`, `@socioconnect/utils`, `@socioconnect/constants`
+- Commands: `nx serve admin`, `nx serve main`, `nx run-many -t build`, `nx run-many -t lint`, `nx run-many -t test`
+- E2E: `nx e2e e2e-admin`, `nx e2e e2e-main`
+- Use standalone components, SCSS, prefix `app` for apps, `sc` for ui-components

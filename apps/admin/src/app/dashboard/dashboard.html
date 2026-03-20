@@ -1,0 +1,9 @@
+<div class="dashboard">
+  <h1>{{ title }}</h1>
+  <p>App: {{ appName }}</p>
+  <p>Mock delay: {{ mockDelay }}ms</p>
+  <p>User: {{ user.name }} ({{ user.id }})</p>
+  <p>Sum: {{ sum }}</p>
+  <sc-button label="Increment" (click)="onAction()"></sc-button>
+  <router-outlet></router-outlet>
+</div>
