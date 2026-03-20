@@ -43,7 +43,7 @@ import { APP_NAME, MOCK_API_DELAY_MS } from '@socioconnect/constants';
 
 ## CI/CD
 
-- Push to `main` or `develop` triggers: lint → test → e2e → build → deploy
+- Push to `main` or `development` triggers: lint → test → e2e → build → deploy
 - Deploy: S3 + CloudFront (secrets: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_BUCKET_DEV, S3_BUCKET_PROD, CLOUDFRONT_DISTRIBUTION_ID_DEV, CLOUDFRONT_DISTRIBUTION_ID_PROD)
 
 ## AI / MCP
