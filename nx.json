@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "analytics": false,
+  "useDaemonProcess": false,
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
@@ -65,7 +66,11 @@
       "unitTestRunner": "vitest-angular"
     },
     "@nx/angular:component": {
-      "style": "scss"
+      "style": "scss",
+      "standalone": true,
+      "changeDetection": "OnPush",
+      "inlineTemplate": false,
+      "inlineStyle": false
     }
   }
 }

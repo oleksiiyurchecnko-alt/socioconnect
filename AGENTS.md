@@ -15,6 +15,10 @@ libs/
   constants/     - App constants
 ```
 
+## Node
+
+- **Node ≥ 20.19** (see `package.json` `engines` and **`.nvmrc`**). With nvm: `nvm use` in the repo root before install/serve. On Node 18, `nx serve` fails with `ERR_REQUIRE_ESM` (Vite).
+
 ## Commands
 
 | Task        | Command                                      |
@@ -50,5 +54,17 @@ import { APP_NAME, MOCK_API_DELAY_MS } from '@socioconnect/constants';
 
 ## AI / MCP
 
-- Use Nx MCP for workspace exploration, generators, docs
+- **Nx MCP** (official): `.cursor/mcp.json` → `nx-mcp` runs `npx nx mcp --no-minimal` (graph, generators, `nx_docs`, Nx Cloud tools when connected). Docs: [Nx MCP reference](https://nx.dev/docs/reference/nx-mcp). Optional: `npx nx configure-ai-agents` for skills + aligned MCP defaults.
+- **Angular CLI MCP** (official): `.cursor/mcp.json` — `search_documentation` pulls current content from [angular.dev](https://angular.dev), plus `find_examples`, `get_best_practices`, `list_projects`, etc. Requires Node ≥20.19 (see `engines` in `package.json`). Setup: [Angular CLI MCP Server setup](https://angular.dev/ai/mcp).
+- VS Code: `.vscode/mcp.json` — same server in `servers` format.
 - Cursor rules in `.cursor/rules/` for Angular/Nx conventions
+
+## Code generation (agents)
+
+Mandatory AI rules live in **`.cursor/rules/angular-agent-generation.mdc`** (`alwaysApply: true`):
+
+1. **Modern Angular** — standalone, signals for UI state, `input()` / `output()` / `model()`, `inject()`, template syntax `@if` / `@for` / `@switch`, default `OnPush`.
+2. **Three files per component** — `.ts` plus separate `.html` and `.scss`; no inline `template` / `styles` in the decorator.
+3. **Architecture** — place code under `shared/` or a domain with `shell/*.routing.ts`, then `feature` → `ui` → `data-access` → `utils` → `types`; full detail in **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
+
+More Nx/Angular notes: `.cursor/rules/nx-angular.mdc`.

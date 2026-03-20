@@ -1,0 +1,43 @@
+---
+description: Mandatory Angular code style for AI agents — modern syntax, file layout, architecture
+alwaysApply: true
+---
+
+# Angular code generation (agents)
+
+When creating or editing Angular code in this workspace, follow these rules. See `ARCHITECTURE.md` for full layer and folder rules.
+
+## Modern Angular syntax (required)
+
+- **Standalone only** — no new `NgModule` wrappers for features; `standalone: true` on components/directives/pipes (or rely on CLI defaults if they omit it when standalone is default).
+- **Signals-first state** — prefer `signal`, `computed`, `linkedSignal`, `resource` / `rxResource` over plain class fields for UI-driven state; use `effect` sparingly and only when needed.
+- **Modern APIs** — `input()` / `input.required()`, `output()`, `model()` instead of `@Input` / `@Output`; `inject()` for DI instead of constructor injection in new code.
+- **Template control flow** — use `@if`, `@for`, `@switch` / `@case`; do **not** use `*ngIf`, `*ngFor`, `*ngSwitch` in new or heavily edited templates.
+- **Change detection** — set `changeDetection: ChangeDetectionStrategy.OnPush` on new components unless there is a documented exception.
+- **Defer / flows** — use `@defer` when it matches the UX requirement; prefer built-in features from current Angular docs (verify via Angular MCP / angular.dev when unsure).
+
+## One component = three files (required)
+
+For every **component**, use **external** template and styles — never `template: \`...\`` or `styles: [\`...\`]` in the decorator.
+
+- `*.component.ts` — class, decorator with `templateUrl` and `styleUrl` (or `styleUrls` if multiple).
+- `*.component.html` — markup only.
+- `*.component.scss` — styles only (SCSS).
+
+Same idea for **directives** or **pipes** that ship with a host template/style (rare): still split files if templates/styles exist.
+
+## Architecture placement (required)
+
+- Under `apps/<admin|main>/src/app/`: put code in **`shared/`** or a **domain folder** (`clients`, etc.).
+- Use the correct subfolder: **`shell/`** (domain **`*.routing.ts` only**), **`feature/`** (smart / page chrome), **`ui/`**, **`data-access/`**, **`utils/`**, **`types/`**. No layout components inside **`shell/`** — chrome stays in feature/ui.
+- **Respect import direction**: a layer imports only from layers below it (see `ARCHITECTURE.md`). Do not import `feature` from `ui`, or another domain from a domain, etc.
+- **`libs/ui-components`**: reusable UI, selector prefix **`sc`**.
+- **Apps**: selector prefix **`app`** (match `project.json`).
+
+## Language
+
+- User-facing copy, comments, and identifiers in code generated for this repo should stay **English** unless the task explicitly asks otherwise.
+
+## Generators
+
+- Prefer `nx generate` / Angular CLI with flags that produce **external** HTML and SCSS; if generating inline-only output, **immediately split** into `.html` / `.scss` and wire `templateUrl` / `styleUrl`.

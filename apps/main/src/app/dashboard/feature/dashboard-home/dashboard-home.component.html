@@ -1,0 +1,20 @@
+<div class="page">
+  <header class="page__header">
+    <span class="page__brand">Socioconnect</span>
+  </header>
+  <main class="page__main">
+    <div class="dashboard-home">
+      @if (snapshot(); as s) {
+        <app-dashboard-stats-panel
+          [heroTitle]="heroTitle"
+          [appName]="s.appName"
+          [mockDelayMs]="s.mockDelayMs"
+          [userName]="s.user.name"
+          [userId]="s.user.id"
+          [sum]="s.sum"
+          (incrementClick)="onIncrement()"
+        />
+      }
+    </div>
+  </main>
+</div>

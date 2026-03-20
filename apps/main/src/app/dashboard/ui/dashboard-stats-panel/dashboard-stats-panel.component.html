@@ -1,0 +1,10 @@
+<div class="panel">
+  <h1 class="panel__title">{{ heroTitle() }}</h1>
+  <p>App: {{ appName() }}</p>
+  <p>Mock delay: {{ mockDelayMs() }}ms</p>
+  <p>User: {{ userName() }} ({{ userId() }})</p>
+  <p>Sum: {{ sum() }}</p>
+  <div>
+    <sc-button label="Increment" (click)="onIncrement()" />
+  </div>
+</div>

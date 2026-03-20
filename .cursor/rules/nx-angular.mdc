@@ -1,6 +1,6 @@
 ---
 description: Nx + Angular conventions for socioconnect
-globs: "**/*.ts"
+globs: "**/*.{ts,html,scss}"
 alwaysApply: false
 ---
 
@@ -10,4 +10,7 @@ alwaysApply: false
 - Shared libs: `@socioconnect/ui-components`, `@socioconnect/types`, `@socioconnect/utils`, `@socioconnect/constants`
 - Commands: `nx serve admin`, `nx serve main`, `nx run-many -t build`, `nx run-many -t lint`, `nx run-many -t test`
 - E2E: `nx e2e e2e-admin`, `nx e2e e2e-main`
-- Use standalone components, SCSS, prefix `app` for apps, `sc` for ui-components
+- Standalone components, SCSS; selector prefix **`app`** in apps, **`sc`** in `libs/ui-components`
+- **Components**: always `templateUrl` + `styleUrl` (separate `.html` / `.scss`); see `angular-agent-generation.mdc` (always applied) for modern syntax (`@if`/`@for`, `input()`/`output()`, signals, `inject()`)
+- Domain layout: `shell/*.routing.ts`, `feature/`, `ui/`, `data-access/`, `utils/`, `types/` — see `ARCHITECTURE.md`
+- Code and comments in English unless specified otherwise

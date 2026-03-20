@@ -1,5 +1,5 @@
-import nx from '@nx/eslint-plugin';
 import baseConfig from '../../eslint.config.mjs';
+import nx from '@nx/eslint-plugin';
 
 export default [
   ...baseConfig,
@@ -28,7 +28,6 @@ export default [
   },
   {
     files: ['**/*.html'],
-    // Override or add rules here
     rules: {},
   },
 ];

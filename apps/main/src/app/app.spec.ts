@@ -1,18 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { App } from './app';
+import { appRoutes } from './app.routes';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [App, RouterModule.forRoot([])],
+      imports: [App, RouterModule.forRoot(appRoutes)],
     }).compileComponents();
   });
 
-  it('should render dashboard', async () => {
+  it('should render dashboard home', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('app-dashboard')).toBeTruthy();
+    expect(compiled.querySelector('app-dashboard-home')).toBeTruthy();
   });
 });

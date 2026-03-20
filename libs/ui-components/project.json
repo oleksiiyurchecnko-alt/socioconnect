@@ -4,7 +4,7 @@
   "sourceRoot": "libs/ui-components/src",
   "prefix": "sc",
   "projectType": "library",
-  "tags": [],
+  "tags": ["type:ui", "scope:lib"],
   "targets": {
     "build": {
       "executor": "@nx/angular:ng-packagr-lite",
