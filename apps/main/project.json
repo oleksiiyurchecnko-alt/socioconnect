@@ -18,6 +18,16 @@
           {
             "glob": "**/*",
             "input": "apps/main/public"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/main/assets/icons",
+            "output": "assets/icons"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/main/assets/images",
+            "output": "assets/images"
           }
         ],
         "styles": ["apps/main/src/styles.scss"]

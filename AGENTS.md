@@ -4,10 +4,11 @@
 
 ```
 apps/
-  admin/       - Angular app (4200)
-  main/        - Angular app (4201)
+  admin/       - Angular app (4200); per-app `public/` (e.g. favicon)
+  main/        - Angular app (4201); same
   e2e-admin/   - Playwright E2E for admin
   e2e-main/   - Playwright E2E for main
+apps/<admin|main>/assets/ - per-app `fonts/`, `icons/`, `images/` (see Static assets)
 libs/
   ui-components/ - Angular components (prefix sc)
   types/         - TS types
@@ -30,6 +31,11 @@ libs/
 | Test        | `nx run-many -t test --all`                  |
 | E2E admin   | `nx e2e e2e-admin`                           |
 | E2E main    | `nx e2e e2e-main`                            |
+
+## Static assets
+
+- Each app has **`apps/<admin|main>/assets/`** — `fonts/` (woff2 + `_fonts.scss` with `@font-face`), `icons/`, `images/`. Import fonts from that app’s `src/styles.scss` with `@use '../assets/fonts/fonts'`; the bundler resolves woff2 from the SCSS pipeline, so `fonts/` is not listed again as a static asset glob. `icons/` and `images/` are copied via that app’s `project.json` (`apps/<app>/assets/icons` → output `assets/icons`, same for `images/`). In templates use paths like `assets/icons/...` and `assets/images/...` (output paths stay the same).
+- **`.../assets/images/`** — one subfolder per image family (folder name = asset id). Files: `{folder-name}-[{variant}].webp` (e.g. `banner/banner-[480].webp`). No loose image files at the `images/` root. Details: `.cursor/rules/assets-images.mdc`. Shared bitmaps used by both apps live in both trees (or split per app if only one needs them).
 
 ## Environments
 

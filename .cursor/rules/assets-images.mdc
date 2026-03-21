@@ -1,0 +1,26 @@
+---
+description: Layout and naming for app assets/images (one folder per image family)
+globs: apps/*/assets/images/**/*
+alwaysApply: false
+---
+
+# `apps/<admin|main>/assets/images` layout
+
+- **One logical image = one subfolder** under that app’s `assets/images/`. Folder name = kebab-case **asset id** (e.g. `banner`, `hero`, `logo-mark`). This id is the **basename** for every file inside.
+- **Do not** add raster/image files directly at `assets/images/` root — only folders (and optional README if ever needed).
+- **All delivered bitmaps in this tree use WebP** unless the task explicitly requires another format for that asset.
+- **File name pattern** (required):
+
+  `{folder-name}-[{variant}].webp`
+
+  - `{folder-name}` must **exactly match** the parent folder name.
+  - `{variant}` describes the variant inside **square brackets**: width breakpoint (`480w`, `960w`), pixel width (`480`, `960`), density (`1x`, `2x`), role (`thumb`, `full`), or source role if you keep multiple exports (`src-png`). Use lowercase and kebab-case inside the brackets when it is multi-part.
+
+Examples (paths under the app you are editing):
+
+- `apps/main/assets/images/banner/banner-[480].webp` (and `banner-[960].webp`)
+- `apps/admin/assets/images/hero/hero-[1280w].webp`
+
+**References in templates:** built output keeps `assets/images/...`, e.g. `assets/images/banner/banner-[480].webp`.
+
+When adding a new image family, create the folder first, then add every WebP variant with the pattern above.
