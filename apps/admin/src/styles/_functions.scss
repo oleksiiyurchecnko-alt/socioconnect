@@ -1,0 +1,23 @@
+@function color($token) {
+  @return var(--sc-color-#{$token});
+}
+
+@function space($token) {
+  @return var(--sc-space-#{$token});
+}
+
+@function radius($token) {
+  @return var(--sc-radius-#{$token});
+}
+
+@function z($token) {
+  @return var(--sc-z-#{$token});
+}
+
+@function font-size($token) {
+  @return var(--sc-font-size-#{$token});
+}
+
+@function line-height($token) {
+  @return var(--sc-line-height-#{$token});
+}

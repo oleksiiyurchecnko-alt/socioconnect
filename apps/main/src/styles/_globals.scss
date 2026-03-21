@@ -1,0 +1,40 @@
+@use './functions';
+
+@layer base {
+  html {
+    background-color: functions.color(background);
+    color: functions.color(text);
+    font-family: var(--sc-font-family-base);
+    font-size: 100%;
+    line-height: var(--sc-line-height-base);
+  }
+
+  body {
+    background-color: functions.color(background);
+    color: functions.color(text);
+    font-family: var(--sc-font-family-base);
+    text-rendering: optimizelegibility;
+  }
+
+  app-root {
+    display: block;
+    min-height: 100dvh;
+  }
+
+  a {
+    color: functions.color(primary);
+    text-decoration: none;
+  }
+}
+
+@layer utilities {
+  .u-sr-only {
+    block-size: 0.0625rem;
+    clip-path: inset(50%);
+    inline-size: 0.0625rem;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+  }
+}

@@ -1,16 +1,38 @@
-:host {
-  display: inline-block;
-}
+@layer components {
+  :host {
+    display: block;
+    width: fit-content;
+  }
 
-button {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background: #f5f5f5;
-  cursor: pointer;
-  font-size: 1rem;
+  .button {
+    align-items: center;
+    background-color: var(--sc-color-primary);
+    border: 1px solid var(--sc-color-primary);
+    border-radius: var(--sc-radius-md);
+    color: var(--sc-color-on-primary);
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-size: var(--sc-font-size-md);
+    font-weight: var(--sc-font-weight-semibold);
+    gap: var(--sc-space-sm);
+    justify-content: center;
+    line-height: var(--sc-line-height-base);
+    min-height: var(--sc-space-control);
+    padding: var(--sc-space-md) var(--sc-space-lg);
+    transition:
+      background-color 160ms ease-in-out,
+      border-color 160ms ease-in-out,
+      box-shadow 160ms ease-in-out;
+  }
 
-  &:hover {
-    background: #e8e8e8;
+  .button:hover {
+    background-color: var(--sc-color-primary-hover);
+    border-color: var(--sc-color-primary-hover);
+  }
+
+  .button:focus-visible {
+    box-shadow: 0 0 0 1px var(--sc-color-focus);
+    outline: none;
   }
 }

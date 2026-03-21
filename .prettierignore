@@ -1,3 +1,9 @@
+node_modules
+dist
+coverage
+.angular
+.nx
+tmp
 # Add files here to ignore them from prettier formatting
 /dist
 /coverage

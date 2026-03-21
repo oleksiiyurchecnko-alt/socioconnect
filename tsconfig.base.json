@@ -15,6 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@admin/*": ["apps/admin/src/app/*"],
+      "@main/*": ["apps/main/src/app/*"],
       "@socioconnect/data-access": ["libs/data-access/src/index.ts"],
       "@socioconnect/ui-components": ["libs/ui-components/src/index.ts"],
       "@socioconnect/types": ["libs/types/src/index.ts"],

@@ -1,0 +1,40 @@
+$colors: (
+  primary: #0057ff,
+  primary-hover: #0046cc,
+  background: #fff,
+  surface: #f8fafc,
+  text: #101828,
+  text-muted: #475467,
+  border: #d0d5dd,
+  on-primary: #fff,
+  focus: #84adff,
+);
+$dark-colors: (
+  primary: #6ea8ff,
+  primary-hover: #8ab8ff,
+  background: #0b1220,
+  surface: #111927,
+  text: #f8fafc,
+  text-muted: #98a2b3,
+  border: #344054,
+  on-primary: #081120,
+  focus: #b2ccff,
+);
+
+@layer tokens {
+  :root {
+    color-scheme: light;
+
+    @each $token, $value in $colors {
+      --sc-color-#{$token}: #{$value};
+    }
+  }
+
+  [data-theme='dark'] {
+    color-scheme: dark;
+
+    @each $token, $value in $dark-colors {
+      --sc-color-#{$token}: #{$value};
+    }
+  }
+}

@@ -1,4 +1,6 @@
 import nx from '@nx/eslint-plugin';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import sheriffEslint from '@softarc/eslint-plugin-sheriff';
 
 const sheriffRecommended = [
@@ -21,6 +23,8 @@ export default [
     ignores: ['**/dist', '**/out-tsc'],
   },
   ...sheriffRecommended,
+  eslintConfigPrettier,
+  eslintPluginPrettierRecommended,
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
     rules: {
@@ -57,13 +61,11 @@ export default [
             },
             {
               regex: '(^|/)apps\\/(main|admin)\\/src\\/app\\/',
-              message:
-                'Cross-app imports are forbidden; applications must stay isolated.',
+              message: 'Cross-app imports are forbidden; applications must stay isolated.',
             },
             {
               group: ['libs/*/src/**', '@socioconnect/*/src/**'],
-              message:
-                'Import through the library public API only.',
+              message: 'Import through the library public API only.',
             },
           ],
         },
@@ -78,13 +80,7 @@ export default [
         {
           patterns: [
             {
-              group: [
-                '@socioconnect/**',
-                'apps/**',
-                'libs/**',
-                '**/apps/**',
-                '**/libs/**',
-              ],
+              group: ['@socioconnect/**', 'apps/**', 'libs/**', '**/apps/**', '**/libs/**'],
               message:
                 'E2E must not import application or library source; use routes, selectors, and Playwright only.',
             },
@@ -113,6 +109,7 @@ export default [
       quotes: ['error', 'single', { avoidEscape: true }],
       semi: ['error', 'always'],
       'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'prettier/prettier': 'error',
     },
   },
 ];

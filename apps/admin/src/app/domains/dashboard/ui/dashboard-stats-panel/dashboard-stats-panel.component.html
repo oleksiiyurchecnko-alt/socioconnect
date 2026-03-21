@@ -1,12 +1,10 @@
 <div class="panel">
   <h1 class="panel__title" data-testid="dashboard-title">{{ heroTitle() }}</h1>
-  <p data-testid="dashboard-app-name">App: {{ appName() }}</p>
-  <p data-testid="dashboard-mock-delay">Mock delay: {{ mockDelayMs() }}ms</p>
-  <p data-testid="dashboard-user">
-    User: {{ userName() }} ({{ userId() }})
-  </p>
-  <p data-testid="dashboard-sum">Sum: {{ sum() }}</p>
-  <div data-testid="dashboard-increment">
+  <p class="panel__meta" data-testid="dashboard-app-name">App: {{ appName() }}</p>
+  <p class="panel__meta" data-testid="dashboard-mock-delay">Mock delay: {{ mockDelayMs() }}ms</p>
+  <p class="panel__meta" data-testid="dashboard-user">User: {{ userName() }} ({{ userId() }})</p>
+  <p class="panel__meta panel__meta--accent" data-testid="dashboard-sum">Sum: {{ sum() }}</p>
+  <div class="panel__actions" data-testid="dashboard-increment">
     <sc-button label="Increment" (click)="onIncrement()" />
   </div>
 </div>

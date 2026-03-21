@@ -28,6 +28,12 @@ export default [
   },
   {
     files: ['**/*.html'],
-    rules: {},
+    rules: {
+      '@angular-eslint/template/no-duplicate-attributes': 'error',
+      '@angular-eslint/template/no-inline-styles': 'error',
+      '@angular-eslint/template/prefer-control-flow': 'error',
+      '@angular-eslint/template/prefer-self-closing-tags': 'error',
+      'prettier/prettier': 'error',
+    },
   },
 ];

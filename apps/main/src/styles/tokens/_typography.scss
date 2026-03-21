@@ -1,0 +1,14 @@
+@layer tokens {
+  :root {
+    --sc-font-family-base: 'Inter', system-ui, sans-serif;
+    --sc-font-weight-regular: 400;
+    --sc-font-weight-medium: 500;
+    --sc-font-weight-semibold: 600;
+    --sc-font-size-sm: 0.875rem;
+    --sc-font-size-md: 1rem;
+    --sc-font-size-lg: 1.125rem;
+    --sc-font-size-xl: 1.5rem;
+    --sc-line-height-tight: 1.2;
+    --sc-line-height-base: 1.5;
+  }
+}

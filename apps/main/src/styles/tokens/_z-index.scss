@@ -1,0 +1,15 @@
+$z-index: (
+  base: 0,
+  dropdown: 100,
+  sticky: 200,
+  modal: 400,
+  toast: 500,
+);
+
+@layer tokens {
+  :root {
+    @each $token, $value in $z-index {
+      --sc-z-#{$token}: #{$value};
+    }
+  }
+}

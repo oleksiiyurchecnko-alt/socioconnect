@@ -1,5 +1,2 @@
 @use '../assets/fonts/fonts';
-
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-}
+@use './styles/index';
