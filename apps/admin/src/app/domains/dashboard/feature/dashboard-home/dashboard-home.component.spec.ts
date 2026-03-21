@@ -13,9 +13,7 @@ describe('DashboardHomeComponent', () => {
   });
 
   it('should display Admin in hero title', () => {
-    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain(
-      'Admin',
-    );
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Admin');
   });
 
   it('should display user name', () => {

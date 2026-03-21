@@ -13,9 +13,7 @@ describe('DashboardHomeComponent', () => {
   });
 
   it('should display Main in hero title', () => {
-    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain(
-      'Main',
-    );
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Main');
   });
 
   it('should display user name', () => {
