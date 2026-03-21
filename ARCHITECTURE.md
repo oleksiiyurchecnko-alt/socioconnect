@@ -2,7 +2,7 @@
 
 ## Overview
 
-Socioconnect uses a domain-oriented layout with explicit layers and dependency rules enforced by Nx module boundaries.
+Socioconnect uses a domain-oriented Angular layout with strict boundaries enforced by Sheriff and ESLint. The architecture is deny-by-default: imports are allowed only when explicitly permitted by layer rules.
 
 ## Project structure
 
@@ -12,6 +12,7 @@ Socioconnect uses a domain-oriented layout with explicit layers and dependency r
 
 ### Libs
 - `libs/ui-components/` — Shared UI components (prefix `sc`)
+- `libs/data-access/` — Shared data-access primitives
 - `libs/types/` — Shared TypeScript types
 - `libs/utils/` — Utility functions
 - `libs/constants/` — App constants
@@ -22,21 +23,21 @@ Each app is organized by domain:
 
 ```
 apps/[app]/src/app/
-├── shared/           # Cross-cutting pieces for the app
-│   ├── ui/          # Presentational components
-│   ├── data-access/ # Services and stores
-│   ├── utils/       # Utilities
-│   └── types/       # Types
-├── [domain]/        # Domain folder (e.g. `dashboard/`, `clients/`, `posts/`)
-│   ├── shell/       # Route config only: `*.routing.ts` (no components or layouts)
-│   │   └── *.routing.ts  # e.g. `dashboard/shell/dashboard.routing.ts` — the only domain entry from `app.routes.ts`
-│   ├── feature/     # Smart / container components (page chrome and outlets live here unless split to ui)
-│   ├── ui/          # Presentational components
-│   ├── data-access/ # Services and stores
-│   ├── utils/       # Utilities
-│   └── types/       # Types
-└── app.component.ts # Root component
+├── app.ts
+├── app.config.ts
+├── app.routes.ts
+└── domains/
+    └── [domain]/
+        ├── feature/     # Smart / container components
+        ├── ui/          # Presentational components
+        ├── data-access/ # Services, stores, resource orchestration
+        ├── shell/       # Guards, interceptors, route-level logic when needed
+        ├── types/       # Domain-only types
+        ├── utils/       # Domain-only helpers
+        └── constants/   # Domain-only constants
 ```
+
+Only these folders are valid inside a domain.
 
 ### Angular component files
 
@@ -47,103 +48,177 @@ Each component should use **three files**: `*.component.ts`, `*.component.html`,
 ### 1. App (bootstrap surface)
 - **Purpose**: Root component, `app.config.ts`, `app.routes.ts`, specs.
 - **May import**:
-  - **`app.routes.ts`**: only each domain’s `shell/*.routing.ts` (e.g. `./dashboard/shell/dashboard.routing`) plus `@angular/router` (and similar). No `./<domain>/feature|ui|data-access|utils|types/`, no `./shared/`.
-  - **`app.ts` / `app.config.ts` / `app.spec.ts`**: Angular/RxJS, `./app.routes`, `./shared/**`, `@socioconnect/*` as needed — but **no** direct imports of domain implementation folders (`./dashboard/feature/...`, `./dashboard/ui/...`, etc.).
-- **Tags**: `type:app`, `scope:[admin|main]` (entire app is still one Nx project; folder rules are ESLint `no-restricted-imports` in `eslint.config.mjs`).
+  - `app.routes.ts`: `@angular/router` and domain feature entrypoints such as `./domains/dashboard/feature/dashboard-home`
+  - `app.ts` / `app.config.ts` / `app.spec.ts`: Angular/RxJS, `./app.routes`, `@socioconnect/*`
+- **Must not import**: another app, sibling domain internals through absolute workspace paths, or deep lib internals
+- **Tags**: `type:app`, `scope:main | scope:admin`
 
-### 2. Shell (routing-only, per domain)
-- **Purpose**: All **route configuration** for that domain (e.g. under `dashboard/shell/`).
-- **Files**: Under `shell/`, **only** `*.routing.ts` (or `*.routes.ts`) — **no** layout components; chrome and `<router-outlet>` wrapping belong in **feature** (or **ui**).
-- **May import**: **`../feature/*` only** for route targets (eager or lazy). Not `../ui/`, `../data-access/`, `../utils/`, `../types/`, not `../../shared/`. Use `@angular/router` and, if needed, other packages — not sibling domain folders.
-- **Tags**: `type:shell` applies to publishable shell **libs** in Nx; in-repo domain shells are enforced by path rules above.
-
-### 3. Feature
+### 2. Feature
 - **Purpose**: Smart components, business orchestration
-- **May import**: Same-domain `ui/`, `data-access/`, `utils/`, `types/`; `shared/`; `@socioconnect/*` libs allowed by Nx tags — not sibling domains (see ESLint `appDomainImportBans`).
-- **Tags**: `type:feature`, `scope:[domain|shared]`
+- **May import**:
+  - same-domain `ui/`
+  - same-domain `data-access/`
+  - same-domain `types/`, `utils/`, `constants/`
+  - shared libs `@socioconnect/ui-components`, `@socioconnect/data-access`, `@socioconnect/types`, `@socioconnect/utils`, `@socioconnect/constants`
+- **Must not import**:
+  - other domains
+  - another feature slice in the same domain
+- **Tags**: `domain:*`, `layer:feature`, `feature:*`
 
-### 4. UI
+### 3. UI
 - **Purpose**: Presentational components
-- **May import**: Same-domain helpers; `shared/`; `type:util` / `type:constants` / `type:types` libs
-- **Tags**: `type:ui`, `scope:[domain|shared]`
+- **May import**:
+  - same-domain `ui/`
+  - same-domain `types/`, `utils/`, `constants/`
+  - shared libs `@socioconnect/ui-components`, `@socioconnect/types`, `@socioconnect/utils`, `@socioconnect/constants`
+- **Must not import**:
+  - `feature/`
+  - `data-access/`
+  - other domains
+- **Tags**: `domain:*`, `layer:ui`
 
-### 5. Data access
+### 4. Data access
 - **Purpose**: Services, stores, HTTP clients
-- **May import**: Same domain `utils/`, `types/`, `constants/` (if present); app `shared/`; published libs `@socioconnect/utils`, `@socioconnect/constants`, `@socioconnect/types`, and any future `type:data-access` lib.
-- **Tags**: `type:data-access`, `scope:[domain|shared]` (folder-level; app code still lives under the `type:app` project)
+- **May import**:
+  - same-domain `data-access/`
+  - same-domain `types/`, `utils/`, `constants/`
+  - shared libs `@socioconnect/data-access`, `@socioconnect/types`, `@socioconnect/utils`, `@socioconnect/constants`
+- **Must not import**:
+  - `ui/`
+  - `feature/`
+  - other domains
+- **Tags**: `domain:*`, `layer:data-access`
 
-### 6. Utils (folder) / util lib
-- **Purpose**: Helper functions
-- **May import**: types, shared, libs
-- **Tags (Nx, `libs/utils`)**: `type:util`, `scope:lib`
+### 5. Shell
+- **Purpose**: Guards, interceptors, route-level policies, adapter code that belongs to the domain boundary
+- **May import**:
+  - same-domain `data-access/`
+  - same-domain `types/`, `utils/`, `constants/`
+  - shared libs `@socioconnect/data-access`, `@socioconnect/types`, `@socioconnect/utils`, `@socioconnect/constants`
+- **Must not import**:
+  - `ui/`
+  - `feature/`
+  - other domains
+- **Tags**: `domain:*`, `layer:shell`
 
-### 7. Types
+### 6. Types
 - **Purpose**: TypeScript types and interfaces
-- **May import**: shared, libs
-- **Tags**: `type:types`, `scope:[domain|shared]`
+- **May import**:
+  - same-domain `types/`
+  - shared `@socioconnect/types`
+- **Must not import**: everything else
+- **Tags**: `domain:*`, `layer:types`
+
+### 7. Utils
+- **Purpose**: Helper functions
+- **May import**:
+  - same-domain `utils/`, `types/`, `constants/`
+  - shared `@socioconnect/utils`, `@socioconnect/types`, `@socioconnect/constants`
+- **Must not import**:
+  - `ui/`
+  - `feature/`
+  - `data-access/`
+- **Tags**: `domain:*`, `layer:utils`
+
+### 8. Constants
+- **Purpose**: Immutable domain constants
+- **May import**:
+  - same-domain `constants/`, `types/`
+  - shared `@socioconnect/constants`, `@socioconnect/types`
+- **Must not import**: everything else
+- **Tags**: `domain:*`, `layer:constants`
+
+## Shared libs
+
+Libs live under:
+
+- `libs/types`
+- `libs/utils`
+- `libs/constants`
+- `libs/ui-components`
+- `libs/data-access`
+
+Rules:
+
+- Libs must not depend on app code
+- Libs must not depend on in-app domain code
+- Import libs only through their public API aliases
+- No deep imports like `@socioconnect/ui-components/src/...`
 
 ## Tag system
 
 ### Type tags (`type:`)
-- `type:app` — root components
-- `type:shell` — routing shells
-- `type:feature` — smart components
-- `type:ui` — presentational components
-- `type:data-access` — services and stores (libs or future publishable data-access libs)
-- `type:util` — `libs/utils`
-- `type:constants` — `libs/constants`
-- `type:types` — types (`libs/types` and in-app type modules)
+- `type:app`
+- `type:libs`
+- `type:e2e`
 
 ### Scope tags (`scope:`)
-- `scope:admin` — admin app code
-- `scope:main` — main app code
-- `scope:shared` — shared app-level code
-- `scope:domain` — code for a specific domain
-- `scope:lib` — libraries
+- `scope:admin`
+- `scope:main`
+- `scope:e2e-admin`
+- `scope:e2e-main`
+
+### Domain tags (`domain:`)
+- `domain:<name>` for app domain code
+
+### Layer tags (`layer:`)
+- `layer:ui`
+- `layer:feature`
+- `layer:data-access`
+- `layer:shell`
+- `layer:types`
+- `layer:utils`
+- `layer:constants`
+
+### Feature tags (`feature:`)
+- `feature:<slice>` for feature isolation inside a domain
+
+### Lib kind tags (`kind:`)
+- `kind:types`
+- `kind:utils`
+- `kind:constants`
+- `kind:ui`
+- `kind:data-access`
 
 ## Dependency rules
 
-**Composition chain (domain code):** `app.routes.ts` → `<domain>/shell/*.routing.ts` → `<domain>/feature/*` → (then `ui/`, `data-access/`, etc. inside the domain). Example domain folder name: **`dashboard/`**.
+Enforced rules:
 
-ESLint enforces:
+1. **App isolation**: `main` and `admin` must not import from each other
+2. **Domain isolation**: a domain may only import files from the same domain
+3. **Layering**: each layer may only import the explicitly allowed lower-level layers
+4. **Feature isolation**: a feature slice may not import another feature slice
+5. **Public API imports**: prefer `index.ts` barrels and path aliases
+6. **No deep relative imports**: `../../../` and deeper are blocked
+7. **No deep lib imports**: `libs/*/src/**` and alias deep paths are blocked
+8. **E2E isolation**: Playwright specs must not import from apps or libs
+9. **Circular dependencies**: blocked by Nx/Sherriff boundary checks
 
-1. **App → shell only (routing)**: `app.routes.ts` may only import domain route modules from `<domain>/shell/` (regex + no `./shared/` there). Other app root TS files must not import `./<domain>/(feature|ui|data-access|utils|types)/` directly.
-2. **Shell → feature only**: files under `apps/*/src/app/*/shell/**` may only use `../feature/...` for relative domain code (not `../ui/`, `../data-access/`, etc.).
-3. **Nx project graph** (`@nx/enforce-module-boundaries`): any file in the app may still pull `@socioconnect/*` per tags (`type:app` → allowed lib tags). That does **not** replace the folder rules above.
-4. **Domain isolation**: under `dashboard/` layers (feature/ui/…), imports matching `**/clients/**` are banned; under `clients/` layers, `**/dashboard/**`. Lists live in `dashboardDomainLayers` / `clientsDomainLayers` in `eslint.config.mjs` — extend when you add domains.
-5. **Shared**: Domains may use `shared/` under the same app (not from `app.routes.ts`).
-6. **Libs**: `@socioconnect/utils`, `@socioconnect/constants`, `@socioconnect/types`, `@socioconnect/ui-components`.
+## E2E
+
+- `apps/e2e-admin` and `apps/e2e-main` interact only through the browser
+- No imports from `apps/**`
+- No imports from `libs/**`
+- Use selectors, routes, and public UI behavior only
 
 ## Examples
 
 ### Valid imports
 ```typescript
-// Feature may import UI
-import { ClientCardComponent } from '../ui/client-card.component';
-
-// UI may import shared UI
-import { SharedButtonComponent } from '../../shared/ui/shared-button.component';
-
-// Data-access may import shared services
-import { SharedHttpService } from '../../shared/data-access/shared-http.service';
+import { DashboardSummaryService } from '../../data-access';
+import { DashboardStatsPanelComponent } from '../../ui';
+import { dashboardHeroTitle } from '../../utils';
+import type { DashboardStatsSnapshot } from '../types';
+import { ButtonComponent } from '@socioconnect/ui-components';
 ```
 
 ### Invalid imports (ESLint will fail)
 ```typescript
-// app.routes.ts must not import domain code except via shell
-import { DashboardHomeComponent } from './dashboard/feature/dashboard-home/dashboard-home.component'; // ❌
-
-// Shell must not import ui / data-access / …
-import { PanelComponent } from '../ui/panel.component'; // ❌
-
-// UI must not import feature
-import { ClientListComponent } from '../feature/client-list.component'; // ❌
-
-// A domain must not import another domain
-import { PostService } from '../../posts/data-access/posts.service'; // ❌
-
-// Types must not import data-access
-import { ClientsService } from '../data-access/clients.service'; // ❌
+import { AuthStore } from '../../auth/data-access'; // ❌ cross-domain
+import { DashboardPageComponent } from '../feature/dashboard-page.component'; // ❌ ui -> feature
+import { DashboardStatsPanelComponent } from '../ui'; // ❌ data-access -> ui
+import { ButtonComponent } from '@socioconnect/ui-components/src/lib/button/button'; // ❌ deep lib import
+import { something } from '../../../admin/src/app/domains/auth/utils'; // ❌ cross-app
 ```
 
 ## Benefits

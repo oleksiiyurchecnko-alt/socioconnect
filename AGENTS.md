@@ -7,10 +7,12 @@ apps/
   admin/       - Angular app (4200); per-app `public/` (e.g. favicon)
   main/        - Angular app (4201); same
   e2e-admin/   - Playwright E2E for admin
-  e2e-main/   - Playwright E2E for main
+  e2e-main/    - Playwright E2E for main
 apps/<admin|main>/assets/ - per-app `fonts/`, `icons/`, `images/` (see Static assets)
+apps/<admin|main>/src/app/domains/<domain>/ - only `feature/`, `ui/`, `data-access/`, `shell/`, `types/`, `utils/`, `constants/`
 libs/
   ui-components/ - Angular components (prefix sc)
+  data-access/   - shared data-access primitives
   types/         - TS types
   utils/         - TS utilities
   constants/     - App constants
@@ -46,10 +48,15 @@ libs/
 
 ```ts
 import { ButtonComponent } from '@socioconnect/ui-components';
+import {} from '@socioconnect/data-access';
 import type { User } from '@socioconnect/types';
 import { addNumbers } from '@socioconnect/utils';
 import { APP_NAME, MOCK_API_DELAY_MS } from '@socioconnect/constants';
 ```
+
+- Prefer public APIs only: local `index.ts` barrels or `@socioconnect/*`
+- Do not import from another app or another domain
+- E2E must not import from `apps/**` or `libs/**`
 
 ## CI/CD
 
@@ -71,6 +78,6 @@ Mandatory AI rules live in **`.cursor/rules/angular-agent-generation.mdc`** (`al
 
 1. **Modern Angular** — standalone, signals for UI state, `input()` / `output()` / `model()`, `inject()`, template syntax `@if` / `@for` / `@switch`, default `OnPush`.
 2. **Three files per component** — `.ts` plus separate `.html` and `.scss`; no inline `template` / `styles` in the decorator.
-3. **Architecture** — place code under `shared/` or a domain with `shell/*.routing.ts`, then `feature` → `ui` → `data-access` → `utils` → `types`; full detail in **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
+3. **Architecture** — place app code under `apps/<app>/src/app/domains/<domain>/` and use only `feature/`, `ui/`, `data-access/`, `shell/`, `types/`, `utils/`, `constants/`. Respect app isolation, domain isolation, feature isolation, and public API imports. Full detail in **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
 
 More Nx/Angular notes: `.cursor/rules/nx-angular.mdc`.

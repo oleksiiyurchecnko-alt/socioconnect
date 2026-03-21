@@ -7,10 +7,12 @@ alwaysApply: false
 # Nx Angular Conventions
 
 - Apps: `admin` (port 4200), `main` (port 4201)
-- Shared libs: `@socioconnect/ui-components`, `@socioconnect/types`, `@socioconnect/utils`, `@socioconnect/constants`
+- Shared libs: `@socioconnect/ui-components`, `@socioconnect/data-access`, `@socioconnect/types`, `@socioconnect/utils`, `@socioconnect/constants`
 - Commands: `nx serve admin`, `nx serve main`, `nx run-many -t build`, `nx run-many -t lint`, `nx run-many -t test`
 - E2E: `nx e2e e2e-admin`, `nx e2e e2e-main`
 - Standalone components, SCSS; selector prefix **`app`** in apps, **`sc`** in `libs/ui-components`
 - **Components**: always `templateUrl` + `styleUrl` (separate `.html` / `.scss`); see `angular-agent-generation.mdc` (always applied) for modern syntax (`@if`/`@for`, `input()`/`output()`, signals, `inject()`)
-- Domain layout: `shell/*.routing.ts`, `feature/`, `ui/`, `data-access/`, `utils/`, `types/` — see `ARCHITECTURE.md`
+- Domain layout: `apps/<app>/src/app/domains/<domain>/{feature,ui,data-access,shell,types,utils,constants}`
+- Prefer local `index.ts` barrels and `@socioconnect/*` aliases over deep imports
+- Do not import across apps or across domains; E2E stays isolated from implementation code
 - Code and comments in English unless specified otherwise

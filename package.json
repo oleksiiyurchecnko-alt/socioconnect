@@ -42,6 +42,8 @@
     "@nx/workspace": "22.6.0",
     "@playwright/test": "^1.36.0",
     "@schematics/angular": "~21.2.0",
+    "@softarc/eslint-plugin-sheriff": "^0.19.6",
+    "@softarc/sheriff-core": "^0.19.6",
     "@swc-node/register": "~1.11.1",
     "@swc/core": "~1.15.5",
     "@swc/helpers": "~0.5.18",

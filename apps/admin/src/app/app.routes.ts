@@ -1,4 +1,11 @@
 import { Route } from '@angular/router';
-import { dashboardRoutes } from './dashboard/shell/dashboard.routing';
 
-export const appRoutes: Route[] = [...dashboardRoutes];
+export const appRoutes: Route[] = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./domains/dashboard/feature/dashboard-home').then(
+        (module) => module.DashboardHomeComponent,
+      ),
+  },
+];

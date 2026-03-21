@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { addNumbers } from '@socioconnect/utils';
 import { APP_NAME, MOCK_API_DELAY_MS } from '@socioconnect/constants';
-import type { DashboardStatsSnapshot } from '../types/dashboard.types';
+import { addNumbers } from '@socioconnect/utils';
+import type { DashboardStatsSnapshot } from '../types';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardSummaryService {
@@ -23,6 +23,6 @@ export class DashboardSummaryService {
   );
 
   increment(): void {
-    this.sum.update((v) => addNumbers(v, 1));
+    this.sum.update((value) => addNumbers(value, 1));
   }
 }

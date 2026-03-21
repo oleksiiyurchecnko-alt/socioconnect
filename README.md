@@ -1,6 +1,6 @@
 # Socioconnect
 
-Nx monorepo with Angular applications.
+Nx monorepo with Angular applications, strict domain boundaries, and Sheriff-enforced architecture.
 
 ## Requirements
 
@@ -29,10 +29,41 @@ nvm use 20
 - `apps/main` - Angular main app
 - `apps/e2e-admin` - Playwright E2E for admin
 - `apps/e2e-main` - Playwright E2E for main
-- `libs/ui-components` - Shared Angular components (Button)
-- `libs/types` - TS types (User)
-- `libs/utils` - TS utilities (addNumbers)
-- `libs/constants` - Constants (APP_NAME, MOCK_API_DELAY_MS)
+- `apps/<app>/src/app/domains/<domain>` - Domain slices with strict layer boundaries
+- `libs/ui-components` - Shared Angular UI
+- `libs/data-access` - Shared data-access primitives
+- `libs/types` - Shared TS types
+- `libs/utils` - Shared utilities
+- `libs/constants` - Shared constants
+
+## App Architecture
+
+```text
+apps/<app>/src/app/
+  app.ts
+  app.config.ts
+  app.routes.ts
+  domains/
+    <domain>/
+      feature/
+      ui/
+      data-access/
+      shell/
+      types/
+      utils/
+      constants/
+```
+
+Rules:
+
+- Apps are isolated: `main` must not import `admin`, `admin` must not import `main`
+- Domains are isolated: one domain must not import another domain
+- Use only the allowed domain folders above
+- Prefer public API imports through local `index.ts` barrels
+- Avoid deep relative imports like `../../../`
+- E2E must not import from apps or libs
+
+See `ARCHITECTURE.md` for the exact layer rules.
 
 ## CI/CD
 

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { DashboardSummaryService } from '../../data-access/dashboard-summary.service';
-import { DashboardStatsPanelComponent } from '../../ui/dashboard-stats-panel/dashboard-stats-panel.component';
-import { dashboardHeroTitle } from '../../utils/dashboard-heading';
+import { DashboardSummaryService } from '../../data-access';
+import { DashboardStatsPanelComponent } from '../../ui';
+import { dashboardHeroTitle } from '../../utils';
 
 @Component({
   selector: 'app-dashboard-home',
@@ -13,7 +13,7 @@ import { dashboardHeroTitle } from '../../utils/dashboard-heading';
 })
 export class DashboardHomeComponent {
   private readonly summary = inject(DashboardSummaryService);
-  protected readonly heroTitle = dashboardHeroTitle('Main');
+  protected readonly heroTitle = dashboardHeroTitle('Admin');
   protected readonly snapshot = this.summary.snapshot;
 
   onIncrement(): void {

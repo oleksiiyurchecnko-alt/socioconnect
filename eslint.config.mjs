@@ -1,46 +1,17 @@
 import nx from '@nx/eslint-plugin';
+import sheriffEslint from '@softarc/eslint-plugin-sheriff';
 
-const crossDomainImportMessage =
-  'Do not import another app domain from here. Use the same domain, app shared/, or @socioconnect/* libraries.';
-
-const dashboardDomainLayers = [
-  'apps/*/src/app/dashboard/feature/**/*.ts',
-  'apps/*/src/app/dashboard/ui/**/*.ts',
-  'apps/*/src/app/dashboard/data-access/**/*.ts',
-  'apps/*/src/app/dashboard/utils/**/*.ts',
-  'apps/*/src/app/dashboard/types/**/*.ts',
-];
-
-const clientsDomainLayers = [
-  'apps/*/src/app/clients/feature/**/*.ts',
-  'apps/*/src/app/clients/ui/**/*.ts',
-  'apps/*/src/app/clients/data-access/**/*.ts',
-  'apps/*/src/app/clients/utils/**/*.ts',
-  'apps/*/src/app/clients/types/**/*.ts',
-];
-
-const appDomainImportBans = [
+const sheriffRecommended = [
+  sheriffEslint.configs.all,
   {
-    files: dashboardDomainLayers,
-    patterns: [{ group: ['**/clients/**'], message: crossDomainImportMessage }],
-  },
-  {
-    files: clientsDomainLayers,
-    patterns: [{ group: ['**/dashboard/**'], message: crossDomainImportMessage }],
+    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+    rules: {
+      '@softarc/sheriff/deep-import': 'error',
+      '@softarc/sheriff/encapsulation': 'error',
+      '@softarc/sheriff/dependency-rule': 'error',
+    },
   },
 ];
-
-const domainDirectLayerRegex =
-  '^\\.\\/([\\w-]+)\\/(feature|ui|data-access|utils|types)\\/';
-
-const appRoutesOnlyShellMessage =
-  'app.routes.ts may only pull in domain route arrays from <domain>/shell/*. Do not import feature, ui, data-access, utils, types, or shared here.';
-
-const appRootNoDirectDomainLayersMessage =
-  'App root files must not import domain implementation folders. Compose routing via <domain>/shell only; use shared/ only for cross-cutting app wiring.';
-
-const shellOnlyFeatureMessage =
-  'Domain shell may import only ../feature/* (route targets). Do not import ui, data-access, utils, types, or app shared/ from shell.';
 
 export default [
   ...nx.configs['flat/base'],
@@ -49,104 +20,50 @@ export default [
   {
     ignores: ['**/dist', '**/out-tsc'],
   },
+  ...sheriffRecommended,
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+    files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
     rules: {
       '@nx/enforce-module-boundaries': [
         'error',
         {
           enforceBuildableLibDependency: true,
+          allowCircularSelfDependency: false,
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
           depConstraints: [
             {
               sourceTag: 'type:app',
-              onlyDependOnLibsWithTags: [
-                'type:shell',
-                'type:feature',
-                'type:ui',
-                'type:data-access',
-                'type:util',
-                'type:constants',
-                'type:types',
-              ],
+              onlyDependOnLibsWithTags: ['type:libs'],
             },
             {
-              sourceTag: 'type:shell',
-              onlyDependOnLibsWithTags: [
-                'type:feature',
-                'type:ui',
-                'type:data-access',
-                'type:util',
-                'type:constants',
-                'type:types',
-                'scope:shared',
-                'scope:lib',
-              ],
+              sourceTag: 'type:libs',
+              onlyDependOnLibsWithTags: ['type:libs'],
             },
             {
-              sourceTag: 'type:feature',
-              onlyDependOnLibsWithTags: [
-                'type:ui',
-                'type:data-access',
-                'type:util',
-                'type:constants',
-                'type:types',
-                'scope:shared',
-                'scope:lib',
-              ],
+              sourceTag: 'type:e2e',
+              onlyDependOnLibsWithTags: [],
+            },
+          ],
+        },
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^\\.\\./\\.\\./\\.\\./',
+              message:
+                'Deep relative imports (../../../+) are forbidden; use path aliases or the module public API (index.ts / public-api.ts).',
             },
             {
-              sourceTag: 'type:ui',
-              onlyDependOnLibsWithTags: [
-                'type:util',
-                'type:constants',
-                'type:types',
-                'scope:shared',
-                'scope:lib',
-              ],
+              regex: '(^|/)apps\\/(main|admin)\\/src\\/app\\/',
+              message:
+                'Cross-app imports are forbidden; applications must stay isolated.',
             },
             {
-              sourceTag: 'type:data-access',
-              onlyDependOnLibsWithTags: [
-                'type:data-access',
-                'type:util',
-                'type:constants',
-                'type:types',
-                'scope:shared',
-                'scope:lib',
-              ],
-            },
-            {
-              sourceTag: 'type:util',
-              onlyDependOnLibsWithTags: [
-                'type:types',
-                'scope:shared',
-                'scope:lib',
-              ],
-            },
-            {
-              sourceTag: 'type:constants',
-              onlyDependOnLibsWithTags: [
-                'type:types',
-                'scope:shared',
-                'scope:lib',
-              ],
-            },
-            {
-              sourceTag: 'type:types',
-              onlyDependOnLibsWithTags: ['scope:shared', 'scope:lib'],
-            },
-            {
-              sourceTag: 'scope:domain',
-              onlyDependOnLibsWithTags: ['scope:shared', 'scope:lib'],
-            },
-            {
-              sourceTag: 'scope:shared',
-              onlyDependOnLibsWithTags: ['scope:lib'],
-            },
-            {
-              sourceTag: '*',
-              onlyDependOnLibsWithTags: ['*'],
+              group: ['libs/*/src/**', '@socioconnect/*/src/**'],
+              message:
+                'Import through the library public API only.',
             },
           ],
         },
@@ -154,71 +71,33 @@ export default [
     },
   },
   {
-    files: ['apps/*/src/app/app.routes.ts'],
+    files: ['apps/e2e-*/**/*.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
         {
           patterns: [
             {
-              regex: domainDirectLayerRegex,
-              message: appRoutesOnlyShellMessage,
+              group: [
+                '@socioconnect/**',
+                'apps/**',
+                'libs/**',
+                '**/apps/**',
+                '**/libs/**',
+              ],
+              message:
+                'E2E must not import application or library source; use routes, selectors, and Playwright only.',
             },
             {
-              regex: '^\\.\\/shared\\/',
-              message: appRoutesOnlyShellMessage,
+              regex: '^\\.\\./\\.\\./\\.\\./',
+              message:
+                'Deep relative imports are forbidden; keep E2E isolated from implementation paths.',
             },
           ],
         },
       ],
     },
   },
-  {
-    files: [
-      'apps/*/src/app/app.ts',
-      'apps/*/src/app/app.config.ts',
-      'apps/*/src/app/app.spec.ts',
-    ],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              regex: domainDirectLayerRegex,
-              message: appRootNoDirectDomainLayersMessage,
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    files: ['apps/*/src/app/*/shell/**/*.ts'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              regex: '^\\.\\./(ui|data-access|utils|types)/',
-              message: shellOnlyFeatureMessage,
-            },
-            {
-              regex: '^\\.\\./\\.\\./shared/',
-              message: shellOnlyFeatureMessage,
-            },
-          ],
-        },
-      ],
-    },
-  },
-  ...appDomainImportBans.map(({ files, patterns }) => ({
-    files,
-    rules: {
-      'no-restricted-imports': ['error', { patterns }],
-    },
-  })),
   {
     files: [
       '**/*.ts',

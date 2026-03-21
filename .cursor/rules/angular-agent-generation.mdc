@@ -28,9 +28,10 @@ Same idea for **directives** or **pipes** that ship with a host template/style (
 
 ## Architecture placement (required)
 
-- Under `apps/<admin|main>/src/app/`: put code in **`shared/`** or a **domain folder** (`clients`, etc.).
-- Use the correct subfolder: **`shell/`** (domain **`*.routing.ts` only**), **`feature/`** (smart / page chrome), **`ui/`**, **`data-access/`**, **`utils/`**, **`types/`**. No layout components inside **`shell/`** — chrome stays in feature/ui.
-- **Respect import direction**: a layer imports only from layers below it (see `ARCHITECTURE.md`). Do not import `feature` from `ui`, or another domain from a domain, etc.
+- Under `apps/<admin|main>/src/app/`, keep bootstrap files at root and place domain code only under `domains/<domain>/`.
+- Inside a domain use only `feature/`, `ui/`, `data-access/`, `shell/`, `types/`, `utils/`, `constants/`.
+- **Respect import direction**: do not import another app, another domain, or a forbidden higher layer.
+- **Prefer public APIs**: import via local `index.ts` barrels or `@socioconnect/*` aliases, never deep lib internals.
 - **`libs/ui-components`**: reusable UI, selector prefix **`sc`**.
 - **Apps**: selector prefix **`app`** (match `project.json`).
 
